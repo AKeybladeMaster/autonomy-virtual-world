@@ -5,5 +5,5 @@
   "scripts": {
     "start": "node tools/serve.cjs"
   },
-  "license": "MIT"
+  "license": "GPL-3.0-only"
 }
