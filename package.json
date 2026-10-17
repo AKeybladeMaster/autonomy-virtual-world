@@ -1,0 +1,9 @@
+{
+  "name": "autonomy-virtual-world",
+  "version": "1.0.0",
+  "description": "A library-free JavaScript virtual world, based on Radu Mariescu-Istodor's tutorial.",
+  "scripts": {
+    "start": "node tools/serve.cjs"
+  },
+  "license": "MIT"
+}

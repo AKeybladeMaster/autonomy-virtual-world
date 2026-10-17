@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#152c2a" />
+    <title>Autonomy — Virtual world lab</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="themes.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="./" aria-label="Autonomy home"
+        ><span class="brand-icon">a<span>·</span></span
+        ><span>AUTONOMY<small>VIRTUAL WORLD LAB</small></span></a
+      >
+      <label class="project-name"
+        ><span class="status-dot"></span
+        ><input
+          id="worldName"
+          maxlength="80"
+          value="Albania"
+          aria-label="World name"
+          title="Click to rename your world"
+        /><span class="rename-icon" aria-hidden="true">✎</span
+        ><span class="tag">LOCAL</span></label
+      >
+      <div class="header-actions">
+        <button id="themeBtn" aria-pressed="false" title="Switch to dark mode">
+          ☾ <span>Dark mode</span></button
+        ><button id="importBtn">↥ <span>Import</span></button
+        ><button id="saveWorldBtn" class="primary">↧ <span>Save world</span></button>
+      </div>
+    </header>
+    <main>
+      <aside class="sidebar">
+        <div class="map-heading sidebar-heading">
+          <span class="eyebrow" id="mapEyebrow">ALBANIA / OPENSTREETMAP</span>
+          <h1 id="worldTitle">Albania</h1>
+          <p id="mapSubtitle">Every mapped road. A world to explore.</p>
+          <p id="datasetInfo" class="field-note">Loading national road network…</p>
+        </div>
+        <div class="mode-switch" aria-label="Workspace mode">
+          <button id="simulateBtn" class="active" aria-pressed="true">
+            ◉ Simulation</button
+          ><button id="editBtn" aria-pressed="false">◇ World editor</button>
+        </div>
+        <section id="simulationPanel">
+          <div class="section-title">
+            <h2>Simulation</h2>
+            <span id="runStatus" class="live-badge">RUNNING</span>
+          </div>
+          <div class="stats">
+            <div><span id="activeCount">0</span><small>ACTIVE CARS</small></div>
+            <div>
+              <span id="distanceValue">0</span
+              ><small id="distanceUnit">BEST DISTANCE · M</small>
+            </div>
+          </div>
+          <div class="button-row">
+            <button id="pauseBtn" class="primary">Ⅱ Pause</button
+            ><button id="restartBtn" title="Restart cars using the current best brain">
+              ↻ Restart
+            </button>
+          </div>
+          <label class="range-label" for="population"
+            >Population <output id="populationValue">40 cars</output></label
+          >
+          <input id="population" type="range" min="0" max="5000" value="40" step="1" />
+          <form id="populationForm" novalidate class="button-row population-entry">
+            <input
+              id="populationNumber"
+              type="number"
+              min="0"
+              max="5000"
+              step="1"
+              value="40"
+              required
+              aria-label="Number of active cars"
+            /><button type="submit">Apply</button>
+          </form>
+          <p id="fleetStatus" class="field-note" role="status">
+            0–5,000 cars. Set zero to clear the simulation.
+          </p>
+          <p class="field-note">
+            Right-hand lanes · vehicle sensing · junction yielding
+          </p>
+          <label class="range-label" for="cruiseSpeed">Cruising speed</label>
+          <select id="cruiseSpeed" aria-describedby="speedHelp">
+            <option value="10">10 km/h</option>
+            <option value="20">20 km/h</option>
+            <option value="30">30 km/h</option>
+            <option value="43.2" selected>43.2 km/h (default)</option>
+            <option value="60">60 km/h</option>
+            <option value="90">90 km/h</option>
+            <option value="120">120 km/h</option>
+            <option value="150">150 km/h</option>
+            <option value="180">180 km/h</option>
+            <option value="200">200 km/h</option>
+            <option value="220">220 km/h</option>
+            <option value="250">250 km/h</option>
+            <option value="280">280 km/h</option>
+            <option value="300">300 km/h</option>
+          </select>
+          <p class="field-note" id="speedHelp">
+            Applies to all cars. Drivers still slow down for traffic and junctions.
+          </p>
+          <div class="section-title divided">
+            <h2>Car camera</h2>
+            <span class="tiny-label">2D / 3D</span>
+          </div>
+          <label class="select-label" for="driverSearch"
+            >Find a driver by name or number</label
+          ><input
+            id="driverSearch"
+            type="search"
+            placeholder="Name or car number"
+            autocomplete="off"
+          />
+          <label class="select-label" for="carSelect">Choose a driver</label
+          ><select id="carSelect" aria-label="Choose car to follow"></select>
+          <div class="driver-pages">
+            <button id="driversPrev" aria-label="Previous drivers">←</button
+            ><span id="driverPageInfo"></span
+            ><button id="driversNext" aria-label="Next drivers">→</button>
+          </div>
+          <p id="driverStatus" class="field-note" aria-live="polite">
+            Choose a driver to inspect.
+          </p>
+          <label class="toggle-row camera-toggle"
+            >Follow selected car<input id="followToggle" type="checkbox" /><span
+              class="switch"
+            ></span
+          ></label>
+          <button id="tagToggle" class="full-width" aria-pressed="true">
+            Hide car names
+          </button>
+          <label class="select-label" for="viewMode">Camera view</label
+          ><select id="viewMode">
+            <option value="2d">2D · world map</option>
+            <option value="split">Split · map + 3D chase camera</option>
+            <option value="3d">3D · chase camera</option>
+          </select>
+          <div class="section-title divided">
+            <h2>Driver's view</h2>
+            <span class="tiny-label">5 → 6 → 4</span>
+          </div>
+          <canvas
+            id="networkCanvas"
+            width="260"
+            height="160"
+            aria-label="Live neural network: five sensor inputs, six hidden neurons, four driving outputs"
+          ></canvas>
+          <div class="network-key">
+            <span><i></i> Active neuron</span><span>Neural sensing + safety rules</span>
+          </div>
+          <div class="button-row compact">
+            <button id="saveBrainBtn">Save best brain</button
+            ><button
+              id="resetBrainBtn"
+              title="Discard saved brain and restore the demo brain"
+            >
+              Reset brain
+            </button>
+          </div>
+        </section>
+        <section id="editorPanel" hidden>
+          <div class="section-title">
+            <h2>Shape your world</h2>
+            <span class="tiny-label">EDITOR</span>
+          </div>
+          <div class="editor-tools">
+            <button data-tool="roads" class="active">⌁ Roads</button
+            ><button data-tool="start">▹ Start</button
+            ><button data-tool="parking">P Parking</button
+            ><button data-tool="stop">⊣ Stop mark</button
+            ><button data-tool="yield">▽ Yield mark</button
+            ><button data-tool="target">◎ Target</button>
+          </div>
+          <p id="toolHelp" class="help-text">
+            Zoom in to add local road segments. Albania's source roads are preserved.
+            Drag your points to move them; right-click to end or delete.
+          </p>
+          <button id="osmBtn" class="full-width">Import OpenStreetMap JSON</button>
+          <p class="field-note">
+            Stop, yield and target markings are visual only, matching the source
+            tutorial.
+          </p>
+        </section>
+        <section class="view-section">
+          <div class="section-title divided"><h2>World layers</h2></div>
+          <label class="toggle-row"
+            >Buildings & trees<input id="sceneryToggle" type="checkbox" checked /><span
+              class="switch"
+            ></span
+          ></label>
+          <label class="toggle-row"
+            >Sensor rays<input id="sensorToggle" type="checkbox" checked /><span
+              class="switch"
+            ></span
+          ></label>
+        </section>
+        <footer class="sidebar-footer">
+          <span class="code-icon">&lt;/&gt;</span>
+          <div>
+            Just JavaScript. No libraries.<small
+              >Based on
+              <a
+                href="https://github.com/gniziemazity/virtual-world"
+                target="_blank"
+                rel="noreferrer"
+                >Radu's virtual world ↗</a
+              ></small
+            >
+          </div>
+        </footer>
+      </aside>
+      <section class="world-stage" aria-label="Interactive virtual world">
+        <div class="canvas-views" data-view="2d">
+          <canvas
+            id="worldCanvas"
+            tabindex="0"
+            aria-label="Virtual world. Drag to pan, scroll to zoom. Use World editor to draw roads."
+          ></canvas
+          ><canvas
+            id="chaseCanvas"
+            aria-label="3D external camera following the selected car"
+          ></canvas>
+        </div>
+        <div id="chaseCaption" class="chase-caption" hidden></div>
+        <div class="compass" aria-hidden="true"><span>N</span><b>↑</b></div>
+        <div class="map-controls">
+          <button id="zoomInBtn" aria-label="Zoom in">+</button
+          ><span id="zoomValue">100%</span
+          ><button id="zoomOutBtn" aria-label="Zoom out">−</button
+          ><span class="control-separator"></span
+          ><button id="fitBtn" title="Fit world in view" aria-label="Fit world in view">
+            ⌖
+          </button>
+        </div>
+        <div class="minimap">
+          <div><span>WORLD OVERVIEW</span><span class="status-dot"></span></div>
+          <canvas
+            id="miniMapCanvas"
+            width="184"
+            height="114"
+            aria-label="World overview minimap"
+          ></canvas>
+        </div>
+        <div class="map-legend">
+          <span><i class="car-dot"></i> Right-hand traffic</span
+          ><span><i class="sensor-line"></i> Sensor rays</span>
+        </div>
+        <div class="map-attribution">
+          <span id="scaleLabel">1:100 coordinates</span
+          ><a
+            href="https://www.openstreetmap.org/copyright"
+            target="_blank"
+            rel="noreferrer"
+            >© OpenStreetMap contributors · ODbL</a
+          >
+        </div>
+        <div class="stage-footer">
+          <span id="interactionHint">DRAG TO EXPLORE <b>·</b> SCROLL TO ZOOM</span
+          ><span class="performance-metrics"
+            ><span id="fpsValue">60</span> FPS <b>·</b> <span id="simRate">1× SIM</span>
+            <b>·</b>
+            <span
+              id="memoryValue"
+              title="Memory measurement availability depends on your browser"
+              >MEM N/A</span
+            ></span
+          >
+        </div>
+        <div id="toast" role="status" aria-live="polite"></div>
+      </section>
+    </main>
+    <input id="fileInput" type="file" accept=".world,.json,application/json" hidden />
+    <dialog id="osmDialog">
+      <form method="dialog">
+        <div class="section-title">
+          <h2>Import road geometry</h2>
+          <button aria-label="Close">✕</button>
+        </div>
+        <p>
+          Paste an Overpass JSON export containing road ways and their nodes. This
+          replaces the current world.
+        </p>
+        <textarea
+          id="osmInput"
+          rows="12"
+          placeholder='{"elements": [...]}'
+          aria-label="OpenStreetMap JSON"
+        ></textarea>
+        <p id="osmError" role="alert"></p>
+        <button type="button" id="parseOsmBtn" class="primary">Import roads</button>
+      </form>
+    </dialog>
+    <!-- Shared configuration and geometry primitives -->
+    <script src="js/constants/simulation.js"></script>
+    <script src="js/constants/palette.js"></script>
+    <script src="js/constants/vehicles.js"></script>
+    <script src="js/world/generation/math/utils.js"></script>
+    <script src="js/world/generation/math/spatial-grid.js"></script>
+    <script src="js/world/generation/primitives/point.js"></script>
+    <script src="js/world/generation/primitives/segment.js"></script>
+    <script src="js/world/generation/primitives/polygon.js"></script>
+    <script src="js/world/generation/primitives/envelope.js"></script>
+    <script src="js/world/generation/math/graph.js"></script>
+    <!-- World-editing tools and visual objects -->
+    <script src="js/world/editor/markings/marking.js"></script>
+    <script src="js/world/editor/markings/start.js"></script>
+    <script src="js/world/editor/markings/parking.js"></script>
+    <script src="js/world/editor/markings/stop.js"></script>
+    <script src="js/world/editor/markings/yield.js"></script>
+    <script src="js/world/editor/markings/target.js"></script>
+    <script src="js/objects/vehicle-model.js"></script>
+    <script src="js/objects/tree.js"></script>
+    <script src="js/objects/building.js"></script>
+    <script src="js/world/generation/world.js"></script>
+    <!-- Neural controllers and simulation objects -->
+    <script src="js/brain/network.js"></script>
+    <script src="js/brain/sensor.js"></script>
+    <script src="js/simulation/controls.js"></script>
+    <script src="js/objects/car.js"></script>
+    <!-- World data, traffic, rendering, then application entry points -->
+    <script src="js/world/generation/demo.js"></script>
+    <script src="js/brain/presets.js"></script>
+    <script src="js/world/persistence.js"></script>
+    <script src="js/world/generation/country.js"></script>
+    <script src="js/world/generation/traffic-network.js"></script>
+    <script src="js/objects/vehicle-geometry.js"></script>
+    <script src="js/simulation/traffic.js"></script>
+    <script src="js/world/generation/scenery.js"></script>
+    <script src="js/rendering/scene.js"></script>
+    <script src="js/rendering/chase.js"></script>
+    <script src="js/ui/metrics.js"></script>
+    <script src="data/albania-roads.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/world/editor/controller.js"></script>
+  </body>
+</html>
