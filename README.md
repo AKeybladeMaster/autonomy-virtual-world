@@ -27,6 +27,14 @@ An open, browser based JavaScript simulation of self driving cars moving across 
 
 ![Selected car followed in the split 2D map and 3D chase view](docs/images/car-camera-split.png)
 
+### Albania V4: split map and 3D camera
+
+![Albania road map beside the selected car's 3D chase camera](docs/images/albania-v4-split.png)
+
+### Mobile map and 3D camera
+
+![Mobile layout with the 2D map above the selected car's 3D camera](docs/images/albania-v4-mobile.png)
+
 ## Features
 
 - Explore Albania's roads or edit a small local world.
